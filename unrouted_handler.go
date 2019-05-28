@@ -234,6 +234,11 @@ func (handler *UnroutedHandler) Middleware(h http.Handler) http.Handler {
 // PostFile creates a new file upload using the datastore after validating the
 // length and parsing the metadata.
 func (handler *UnroutedHandler) PostFile(w http.ResponseWriter, r *http.Request) {
+	uploadId, err := extractIDFromPath(r.URL.Path)
+	if err != nil {
+		uploadId = "" // generate by file store
+	}
+
 	// Check for presence of application/offset+octet-stream. If another content
 	// type is defined, it will be ignored and treated as none was set because
 	// some HTTP clients may enforce a default value for this header.
@@ -290,6 +295,7 @@ func (handler *UnroutedHandler) PostFile(w http.ResponseWriter, r *http.Request)
 	meta := ParseMetadataHeader(r.Header.Get("Upload-Metadata"))
 
 	info := FileInfo{
+		ID:             uploadId,
 		Size:           size,
 		SizeIsDeferred: sizeIsDeferred,
 		MetaData:       meta,

@@ -38,8 +38,9 @@ func NewHandler(config Config) (*Handler, error) {
 	routedHandler.Handler = handler.Middleware(mux)
 
 	mux.Post("", http.HandlerFunc(handler.PostFile))
+	mux.Post(":id", http.HandlerFunc(handler.PostFile))
 	mux.Head(":id", http.HandlerFunc(handler.HeadFile))
-	mux.Add("PATCH", ":id", http.HandlerFunc(handler.PatchFile))
+	mux.Patch(":id", http.HandlerFunc(handler.PatchFile))
 
 	// Only attach the DELETE handler if the Terminate() method is provided
 	if config.StoreComposer.UsesTerminater {
