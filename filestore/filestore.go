@@ -23,8 +23,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/tus/tusd"
-	"github.com/tus/tusd/uid"
+	"github.com/searKing/tusd"
+	"github.com/searKing/tusd/uid"
 
 	"gopkg.in/Acconut/lockfile.v1"
 )

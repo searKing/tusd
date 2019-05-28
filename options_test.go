@@ -3,8 +3,6 @@ package tusd_test
 import (
 	"net/http"
 	"testing"
-
-	. "github.com/tus/tusd"
 )
 
 func TestOptions(t *testing.T) {

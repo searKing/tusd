@@ -4,9 +4,9 @@
 package tusd_test
 
 import (
-	gomock "github.com/golang/mock/gomock"
-	tusd "github.com/tus/tusd"
-	io "io"
+	"github.com/golang/mock/gomock"
+	"github.com/searKing/tusd"
+	"io"
 )
 
 // Mock of FullDataStore interface

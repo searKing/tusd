@@ -1,10 +1,10 @@
 package tusd_test
 
 import (
-	"github.com/tus/tusd"
-	"github.com/tus/tusd/filestore"
-	"github.com/tus/tusd/limitedstore"
-	"github.com/tus/tusd/memorylocker"
+	"github.com/searKing/tusd"
+	"github.com/searKing/tusd/filestore"
+	"github.com/searKing/tusd/limitedstore"
+	"github.com/searKing/tusd/memorylocker"
 )
 
 func ExampleNewStoreComposer() {

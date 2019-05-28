@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/searKing/tusd"
 	"github.com/stretchr/testify/assert"
-	"github.com/tus/tusd"
 )
 
 func TestEtcd3Locker(t *testing.T) {
