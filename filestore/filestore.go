@@ -59,7 +59,12 @@ func (store FileStore) UseIn(composer *tusd.StoreComposer) {
 }
 
 func (store FileStore) NewUpload(info tusd.FileInfo) (id string, err error) {
-	id = uid.Uid()
+	if info.ID == "" {
+		id = uid.Uid()
+	} else {
+		// certain tests set info.ID in advance
+		id = info.ID
+	}
 	info.ID = id
 
 	// Create .bin file with no content
