@@ -361,6 +361,12 @@ func (handler *UnroutedHandler) PostFile(w http.ResponseWriter, r *http.Request)
 	handler.sendResp(w, r, http.StatusCreated)
 }
 
+// PutFile upgrades a new file upload using the datastore after validating the
+// length and parsing the metadata.
+func (handler *UnroutedHandler) PutFile(w http.ResponseWriter, r *http.Request) {
+	handler.sendError(w, r, ErrNotImplemented)
+}
+
 // HeadFile returns the length and offset for the HEAD request
 func (handler *UnroutedHandler) HeadFile(w http.ResponseWriter, r *http.Request) {
 
