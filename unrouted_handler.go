@@ -239,6 +239,24 @@ func (handler *UnroutedHandler) PostFile(w http.ResponseWriter, r *http.Request)
 		uploadId = "" // generate by file store
 	}
 
+	if uploadId != "" {
+		// Do not proxy the call to the data store if the upload is already created
+		info, err := handler.composer.Core.GetInfo(uploadId)
+		if err == nil {
+			w.Header().Set("Upload-Offset", strconv.FormatInt(info.Offset, 10))
+
+			// If a resource has been created on the origin server, the response SHOULD be 201 (Created)
+			// and contain an entity which describes
+			// the status of the request and refers to the new resource, and a Location header
+			// Add the Location header directly after creating the new resource to even
+			// include it in cases of failure when an error is returned
+			url := handler.absFileURL(r, uploadId)
+			w.Header().Set("Location", url)
+			handler.sendResp(w, r, http.StatusCreated)
+			return
+		}
+	}
+
 	// Check for presence of application/offset+octet-stream. If another content
 	// type is defined, it will be ignored and treated as none was set because
 	// some HTTP clients may enforce a default value for this header.
