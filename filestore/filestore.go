@@ -88,6 +88,8 @@ func (store FileStore) WriteChunk(id string, offset int64, src io.Reader) (int64
 		return 0, err
 	}
 	defer file.Close()
+	// Seek to the beginning of the file
+	file.Seek(offset, io.SeekStart)
 
 	n, err := io.Copy(file, src)
 
