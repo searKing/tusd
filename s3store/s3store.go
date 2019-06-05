@@ -663,7 +663,7 @@ func (store S3Store) deleteIncompletePartForUpload(uploadId string) error {
 func splitIds(id string) (uploadId, multipartId string) {
 	index := strings.Index(id, "+")
 	if index == -1 {
-		return
+		return id, ""
 	}
 
 	uploadId = id[:index]
