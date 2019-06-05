@@ -8,6 +8,9 @@ import (
 	"net/http"
 	"reflect"
 	"regexp"
+	"strings"
+
+	"github.com/h2non/parth"
 )
 
 // EOL represents the end of line character.
@@ -52,7 +55,7 @@ func MatchScheme(req *http.Request, ereq *Request) (bool, error) {
 // MatchHost matches the HTTP host header field of the given request.
 func MatchHost(req *http.Request, ereq *Request) (bool, error) {
 	url := ereq.URLStruct
-	if url.Host == req.URL.Host {
+	if strings.EqualFold(url.Host, req.URL.Host) {
 		return true, nil
 	}
 	return regexp.MatchString(url.Host, req.URL.Host)
@@ -60,6 +63,9 @@ func MatchHost(req *http.Request, ereq *Request) (bool, error) {
 
 // MatchPath matches the HTTP URL path of the given request.
 func MatchPath(req *http.Request, ereq *Request) (bool, error) {
+	if req.URL.Path == ereq.URLStruct.Path {
+		return true, nil
+	}
 	return regexp.MatchString(ereq.URLStruct.Path, req.URL.Path)
 }
 
@@ -103,6 +109,22 @@ func MatchQueryParams(req *http.Request, ereq *Request) (bool, error) {
 		}
 
 		if !match {
+			return false, nil
+		}
+	}
+	return true, nil
+}
+
+// MatchPathParams matches the URL path parameters of the given request.
+func MatchPathParams(req *http.Request, ereq *Request) (bool, error) {
+	for key, value := range ereq.PathParams {
+		var s string
+
+		if err := parth.Sequent(req.URL.Path, key, &s); err != nil {
+			return false, nil
+		}
+
+		if s != value {
 			return false, nil
 		}
 	}
