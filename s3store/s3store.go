@@ -73,6 +73,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/searKing/golib/io_"
 	"io"
 	"io/ioutil"
 	"os"
@@ -384,12 +385,40 @@ func (store S3Store) GetInfo(id string) (info tusd.FileInfo, err error) {
 }
 
 func (store S3Store) GetReader(id string) (io.Reader, error) {
+	// dummy test
+	dummyReader, err := store.getReaderAt(id, 0)
+	if err != nil {
+		return nil, err
+	}
+	// Try to close the reader if the io.Closer interface is implemented
+	if dummyCloser, ok := dummyReader.(io.Closer); ok {
+		_ = dummyCloser.Close()
+	}
+
+	info, err := store.GetInfo(id)
+	if err != nil {
+		return nil, err
+	}
+	rs := io_.DynamicReadSeeker(func(off int64) (reader io.Reader, e error) {
+		return store.getReaderAt(id, off)
+	}, info.Offset)
+
+	return rs, nil
+}
+
+func (store S3Store) getReaderAt(id string, off int64) (io.Reader, error) {
 	uploadId, multipartId := splitIds(id)
+	var byteRange *string
+	if off != 0 {
+		byteRangeStr := fmt.Sprintf("bytes=%d-", off)
+		byteRange = &byteRangeStr
+	}
 
 	// Attempt to get upload content
 	res, err := store.Service.GetObject(&s3.GetObjectInput{
 		Bucket: aws.String(store.Bucket),
 		Key:    store.keyWithPrefix(uploadId),
+		Range:  byteRange,
 	})
 	if err == nil {
 		// No error occurred, and we are able to stream the object
